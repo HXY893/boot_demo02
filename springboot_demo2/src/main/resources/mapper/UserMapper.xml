@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.springboot_demo2.mapper.UserMapper">
+    <!--<resultMap id="base" type="com.springboot_demo2.pojo.User">-->
+        <!--<id column="id" property="id"/>-->
+        <!--<result column="name" property="name"/>-->
+        <!--<result column="price" property="price"/>-->
+        <!--<result column="tel" property="tel"/>-->
+    <!--</resultMap>-->
+    <!--<select id="selectAll" resultMap="base" parameterType="java.lang.Object">-->
+        <!--select * from cr.spring Limit #{offset},#{limit}-->
+    <!--</select>-->
+
+    <!--<select id="selectTotal" resultType="java.lang.Integer">-->
+        <!--select count(*) from cr.spring-->
+    <!--</select>-->
+    <!--查询加分页-->
+    <select id="selectAllByHelper" resultType="com.springboot_demo2.pojo.Order" parameterType="java.util.Map">
+        select * from hxy.order
+        <where>
+             <if test="searchText != null and searchText != ''">
+                   and  concat(orderid,ordertime,orderprice,orderuser,orderdescribe) like concat('%',#{searchText},'%')
+             </if>
+        </where>
+        limit #{pageNumber},#{pageSize}
+
+
+    </select>
+    <select id="selectCount" resultType="java.lang.Integer">
+        select count(*) from hxy.order
+    </select>
+    <!--添加用户信息-->
+    <insert id="addOrder" parameterType="com.springboot_demo2.pojo.Order">
+        insert into hxy.order
+        (orderid,ordertime,orderprice,orderuser,orderdescribe)
+        values
+       (#{orderid}, #{ordertime}, #{orderprice},#{orderuser}, #{orderdescribe})
+    </insert>
+    <!--更新用户信息-->
+    <update id="updateOrder" parameterType="com.springboot_demo2.pojo.Order">
+        update hxy.order set
+        ordertime=#{ordertime}, orderprice=#{orderprice},
+        orderuser=#{orderuser}, orderdescribe=#{orderdescribe}
+        where orderid=#{orderid}
+    </update>
+    <!--删除用户信息-->
+    <delete id="deleteByOrderid" parameterType="java.util.Arrays">
+        delete from hxy.order
+        <where>
+            <foreach collection="array" item="id" open="orderid IN (" close=")" separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+</mapper>
